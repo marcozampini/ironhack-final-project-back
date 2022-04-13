@@ -1,5 +1,10 @@
 const { Schema, model } = require('mongoose')
 
+/*
+  Wishlist are used to link a user to a group and a list of
+  names.
+*/
+
 const wishlistSchema = new Schema(
   {
     group: { type: Schema.Types.ObjectId, ref: 'Group', required: true },

@@ -1,6 +1,9 @@
 const { Schema, model } = require('mongoose')
 
-// TODO: Please make sure you edit the user model to whatever makes sense in this case
+/*
+  Group are used to put wishlists and users in common around naming a baby
+*/
+
 const groupSchema = new Schema(
   {
     owner: { type: Schema.Types.ObjectId, ref: 'User', required: true },

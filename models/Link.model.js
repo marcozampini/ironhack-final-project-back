@@ -1,5 +1,10 @@
 const { Schema, model } = require('mongoose')
 
+/*
+  Links are used to implement list of names in the wishlist of a used
+  for a given group
+*/
+
 const linkSchema = new Schema(
   {
     wishlist: { type: Schema.Types.ObjectId, ref: 'Wishlist', required: true },

@@ -1,5 +1,10 @@
 const { Schema, model } = require("mongoose");
 
+/*
+  Name is used to store a given string (a name) and reference it
+  in the NameStats model
+*/
+
 const nameSchema = new Schema(
   {
     value: {
