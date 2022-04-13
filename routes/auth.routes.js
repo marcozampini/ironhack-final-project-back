@@ -1,4 +1,5 @@
 const router = require("express").Router();
+const jwt = require("jsonwebtoken");
 
 // ℹ️ Handles password encryption
 const bcrypt = require("bcrypt");
@@ -72,12 +73,12 @@ router.post("/signup", isLoggedOut, (req, res) => {
 });
 
 router.post("/login", isLoggedOut, (req, res, next) => {
-  const { username, password } = req.body;
+  const { email, password } = req.body;
 
-  if (!username) {
+  if (!email) {
     return res
       .status(400)
-      .json({ errorMessage: "Please provide your username." });
+      .json({ errorMessage: "Please provide your email." });
   }
 
   // Here we use the same logic as above
@@ -88,24 +89,35 @@ router.post("/login", isLoggedOut, (req, res, next) => {
     });
   }
 
-  // Search the database for a user with the username submitted in the form
-  User.findOne({ username })
+  // Search the database for a user with the email submitted in the form
+  User.findOne({ email })
     .then((user) => {
       // If the user isn't found, send the message that user provided wrong credentials
       if (!user) {
         return res.status(400).json({ errorMessage: "Wrong credentials." });
       }
 
-      // If user is found based on the username, check if the in putted password matches the one saved in the database
+      // If user is found based on the email, check if the in putted password matches the one saved in the database
       bcrypt.compare(password, user.password).then((isSamePassword) => {
         if (!isSamePassword) {
           return res.status(400).json({ errorMessage: "Wrong credentials." });
         }
-        Session.create({ user: user._id, createdAt: Date.now() }).then(
-          (session) => {
-            return res.json({ user, accessToken: session._id });
-          }
+
+        // Deconstruct the user object to omit the password
+        const { _id, email, username } = user;
+
+        // Create an object that will be set as the token payload
+        const payload = { _id, email, username };
+
+        // Create and sign the token
+        const authToken = jwt.sign(
+          payload,
+          process.env.TOKEN_SECRET,
+          { algorithm: 'HS256', expiresIn: "6h" }
         );
+
+        // Send the token as the response
+        res.status(200).json({ authToken: authToken });
       });
     })
 
