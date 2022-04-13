@@ -129,15 +129,4 @@ router.post("/login", isLoggedOut, (req, res, next) => {
     });
 });
 
-router.delete("/logout", isLoggedIn, (req, res) => {
-  Session.findByIdAndDelete(req.headers.authorization)
-    .then(() => {
-      res.status(200).json({ message: "User was logged out" });
-    })
-    .catch((err) => {
-      console.log(err);
-      res.status(500).json({ errorMessage: err.message });
-    });
-});
-
 module.exports = router;
