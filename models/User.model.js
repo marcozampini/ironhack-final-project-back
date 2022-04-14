@@ -16,6 +16,10 @@ const userSchema = new Schema(
       type: String,
       required: true
     },
+    avatarUrl: {
+      type: String,
+      required: true
+    }
   },
   {
     // this second object adds extra properties: `createdAt` and `updatedAt`
