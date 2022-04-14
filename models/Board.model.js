@@ -1,10 +1,10 @@
 const { Schema, model } = require('mongoose')
 
 /*
-  Group are used to put wishlists and users in common around naming a baby
+  Board are used to put lists and users in common around naming a baby
 */
 
-const groupSchema = new Schema(
+const boardSchema = new Schema(
   {
     owner: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     name: {
@@ -18,6 +18,6 @@ const groupSchema = new Schema(
   }
 )
 
-const Group = model('Group', groupSchema)
+const Board = model('Board', boardSchema)
 
-module.exports = Group
+module.exports = Board

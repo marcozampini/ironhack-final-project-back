@@ -1,13 +1,13 @@
 const { Schema, model } = require('mongoose')
 
 /*
-  Wishlist are used to link a user to a group and a list of
+  List are used to link a user to a board and a list of
   names.
 */
 
-const wishlistSchema = new Schema(
+const listSchema = new Schema(
   {
-    group: { type: Schema.Types.ObjectId, ref: 'Group', required: true },
+    board: { type: Schema.Types.ObjectId, ref: 'Board', required: true },
     owner: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     name: {
       type: String,
@@ -20,6 +20,6 @@ const wishlistSchema = new Schema(
   }
 )
 
-const Wishlist = model('Wishlist', wishlistSchema)
+const List = model('List', listSchema)
 
-module.exports = Wishlist
+module.exports = List
