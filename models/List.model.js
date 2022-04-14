@@ -9,10 +9,10 @@ const listSchema = new Schema(
   {
     board: { type: Schema.Types.ObjectId, ref: 'Board', required: true },
     owner: { type: Schema.Types.ObjectId, ref: 'User', required: true },
-    name: {
-      type: String,
-      required: true,
-    },
+    status : {
+      type: 'pending' | 'accepted' | 'archived',
+      required: true
+    }
   },
   {
     // this second object adds extra properties: `createdAt` and `updatedAt`
