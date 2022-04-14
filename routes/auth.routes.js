@@ -1,5 +1,6 @@
 const router = require("express").Router();
 const jwt = require("jsonwebtoken");
+const { isAuthenticated } = require('../middleware/jwt.middleware')
 
 // ℹ️ Handles password encryption
 const bcrypt = require("bcrypt");
@@ -10,7 +11,6 @@ const saltRounds = 10;
 
 // Require the User model in order to interact with the database
 const User = require("../models/User.model");
-const Session = require("../models/Session.model");
 
 // Require necessary (isLoggedOut and isLiggedIn) middleware in order to control access to specific routes
 const isLoggedOut = require("../middleware/isLoggedOut");
@@ -36,9 +36,9 @@ router.post("/signup", isLoggedOut, (req, res) => {
     // If the user is found, send the message username is taken
     if (found) {
       if (found.username === username) {
-        return res.status(400).json({ errorMessage: "Username already taken." });
+        return res.status(400).json({ errorMessage: "Username already exists." });
       } else {
-        return res.status(400).json({ errorMessage: "Email already taken." });
+        return res.status(400).json({ errorMessage: "Email already exists." });
       }
     }
 
@@ -128,5 +128,9 @@ router.post("/login", isLoggedOut, (req, res, next) => {
       // return res.status(500).render("login", { errorMessage: err.message });
     });
 });
+
+router.get('/verify', isAuthenticated, (req, res, next) => {
+  res.status(200).json(req.payload)
+})
 
 module.exports = router;
