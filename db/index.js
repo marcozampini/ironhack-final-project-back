@@ -10,19 +10,9 @@ const MONGO_URI = process.env.MONGODB_URI || "mongodb://localhost:27017/project_
 console.log(
 
   `Initiating the connection to database on ${MONGO_URI}`
-  );
-const connect = () => {
-  mongoose
-  .connect(MONGO_URI)
-  .then((x) => {
-    console.log(
-      `Connected to Mongo! Database name: "${x.connections[0].name}"`
-    );
-  })
-  .catch((err) => {
-    console.error(`Could not connect to DB ${MONGO_URI}, ${err}`);
-    process.exit(1)
-  });
+);
+const connect = async () => {
+  return await mongoose.connect(MONGO_URI);
 };
 
 module.exports = connect;
