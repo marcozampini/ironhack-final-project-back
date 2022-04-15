@@ -14,6 +14,7 @@ function generateFakeListForABoard(quantity, boardId, allUsersId) {
     let list = {
       board: boardId,
       owner: randomUser._id,
+      status: 'pending'
     };
     list.push(list);
   }
@@ -27,9 +28,14 @@ const perform = async () => {
     const allUserIds = (await User.find({ name: /_fake$/ })).map(user => user._id);
     const allBoardIds = (await Board.find({ name: /_fake$/ })).map(board => board._id);
 
-    for (let board of allBoardIds) {
-      const listBatch = generateFakeListForABoard(6, allBoardIds[board], ...allUserIds);
-      await List.create(listBatch);
+    console.log(`💽 Currently ${allUserIds.length} fake users and ${allBoardIds.length} fake boards in db.`);
+
+    for (const boardId of allBoardIds) {
+      const randomNbOfLists = 4 + Math.floor(Math.random() * 10);
+      console.log(`✅ Seeding for board ${boardId} -> ${randomNbOfLists} lists`);
+      const listBatch = generateFakeListForABoard(randomNbOfLists, boardId, ...allUserIds);
+      const listsInDb = await List.create(listBatch);
+      listsInDb.map(list => console.log(`-> Seeded list ${list.id} for user ${list.owner} and board ${list.board}`))
     }
 
     await mongoose.connection.close()
