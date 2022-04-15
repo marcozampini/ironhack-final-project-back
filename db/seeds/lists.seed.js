@@ -7,18 +7,18 @@ const List = require('../../models/List.model')
 
 // Create list for random users for a given group
 function generateFakeListForABoard(quantity, boardId, allUsersId) {
-  const list = [];
-  for (let i = 0; i < quantity; i++) {
+  const lists = [];
+  for (let i = 0; i < quantity && allUsersId.length; i++) {
     const randomIndex = Math.floor(Math.random() * allUsersId.length);
     const randomUser = allUsersId.splice(randomIndex, 1);
     let list = {
       board: boardId,
-      owner: randomUser._id,
+      owner: randomUser,
       status: 'pending'
     };
-    list.push(list);
+    lists.push(list);
   }
-  return list;
+  return lists;
 }
 
 const perform = async () => {
@@ -33,7 +33,7 @@ const perform = async () => {
     for (const boardId of allBoardIds) {
       const randomNbOfLists = 4 + Math.floor(Math.random() * 10);
       console.log(`✅ Seeding for board ${boardId} -> ${randomNbOfLists} lists`);
-      const listBatch = generateFakeListForABoard(randomNbOfLists, boardId, ...allUserIds);
+      const listBatch = generateFakeListForABoard(randomNbOfLists, boardId, [...allUserIds]);
       const listsInDb = await List.create(listBatch);
       listsInDb.map(list => console.log(`-> Seeded list ${list.id} for user ${list.owner} and board ${list.board}`))
     }

@@ -37,7 +37,7 @@ const perform = async () => {
   try {
     await connect()
     await Board.deleteMany({ name: /_fake$/ })
-    await generateFakeBoards(2)
+    await generateFakeBoards(15)
     await mongoose.connection.close()
   } catch (error) {
     console.log('Could not perform seeding : ', error)
