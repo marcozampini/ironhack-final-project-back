@@ -17,8 +17,8 @@ function getTokenFromHeaders(req) {
     req.headers.authorization.split(' ')[0] === 'Bearer'
   ) {
     // Get the encoded token string and return it
-    const token = req.headers.authorization.split(' ')[1]
-    return token
+    req.token = req.headers.authorization.split(' ')[1]
+    return req.token
   }
 
   return null

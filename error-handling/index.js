@@ -10,6 +10,10 @@ module.exports = (app) => {
     console.error("ERROR", req.method, req.path, err);
 
     // only render if the error ocurred before sending the response
+    if (err.status === 401 &&
+      err.code.includes('invalid_token')) {
+      return res.status(err.status).send('Wrong Token')
+    }
     if (!res.headersSent) {
       res.status(500).json({
         errorMessage: "Internal server error. Check the server console",
