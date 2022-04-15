@@ -10,7 +10,8 @@ const listSchema = new Schema(
     board: { type: Schema.Types.ObjectId, ref: 'Board', required: true },
     owner: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     status : {
-      type: 'pending' | 'accepted' | 'archived',
+      type: String,
+      enum: ['pending', 'accepted', 'archived'],
       required: true
     }
   },
