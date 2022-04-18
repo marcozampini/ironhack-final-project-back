@@ -32,16 +32,18 @@ router.post(
 )
 
 router.delete(
-  '/:listId/:linkId',
+  '/:listId/',
   isAuthenticated,
   getCurrentUser,
   isOwnerOfList,
   async (req, res, next) => {
     try {
-      const { linkId } = req.params
-      await Link.findByIdAndRemove(linkId)
-      res.status(204).json({ message: 'Link deleted' })
+      const { listId } = req.params
+      const nameId = req.body.name
+      await Link.findOneAndDelete({ name: nameId, list: listId })
+      res.status(204).send('ok')
     } catch (err) {
+      console.log(err)
       res.json(err)
     }
   }
