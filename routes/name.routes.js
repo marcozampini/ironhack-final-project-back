@@ -13,14 +13,6 @@ const searchNames = require('../controllers/searchName.controller')
 
   minlen: number
   maxlen: number
-  gender: number -> 1 boy | 2 girl, default:  any
-
-  sort:
-    alpha = default
-    popularity
-  order:
-    asc = default
-    desc
 */
 
 router.get('/', isAuthenticated, async (req, res, next) => {

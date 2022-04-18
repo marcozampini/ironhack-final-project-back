@@ -6,7 +6,10 @@ const List = require('../models/List.model')
 const Link = require('../models/Link.model')
 const Name = require('../models/nameModels/Name.model')
 const User = require('../models/User.model')
-const { isParticipantOfBoard } = require('../middleware/isParticipantOfBoard.middleware')
+const {
+  isParticipantOfBoard,
+} = require('../middleware/isParticipantOfBoard.middleware')
+const httpStatus = require('http-status')
 
 /* GET all boards for the current user */
 router.get('/', isAuthenticated, getCurrentUser, async (req, res, next) => {
@@ -72,5 +75,26 @@ router.get(
     }
   }
 )
+
+router.post('/', isAuthenticated, getCurrentUser, async (req, res, next) => {
+  const owner = req.user._id
+  const { name } = req.body
+  if (!name) {
+    return res.status(httpStatus.BAD_REQUEST).send('Missing name property in body')
+  }
+  try {
+    const newBoard = await Board.create({
+      owner,
+      name,
+    })
+    await List.create({
+      board: newBoard._id,
+      owner,
+    })
+    res.status(httpStatus.CREATED).send(newBoard);
+  } catch (err) {
+    res.json(err)
+  }
+})
 
 module.exports = router
