@@ -6,6 +6,7 @@ const List = require('../models/List.model')
 const Link = require('../models/Link.model')
 const Name = require('../models/nameModels/Name.model')
 const User = require('../models/User.model')
+const { isParticipantOfBoard } = require('../middleware/isParticipantOfBoard.middleware')
 
 /* GET all boards for the current user */
 router.get('/', isAuthenticated, getCurrentUser, async (req, res, next) => {
@@ -32,6 +33,7 @@ router.get(
   '/:boardId',
   isAuthenticated,
   getCurrentUser,
+  isParticipantOfBoard,
   async (req, res, next) => {
     const ownerId = req.user._id
     try {
