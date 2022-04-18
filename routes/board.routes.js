@@ -1,5 +1,6 @@
 const router = require('express').Router()
 const { isAuthenticated } = require('../middleware/jwt.middleware')
+const { isOwnerOfBoard } = require('../middleware/isOwnerOfBoard.middleware')
 const { getCurrentUser } = require('../middleware/getCurrentUser.middleware')
 const Board = require('../models/Board.model')
 const List = require('../models/List.model')
@@ -96,5 +97,27 @@ router.post('/', isAuthenticated, getCurrentUser, async (req, res, next) => {
     res.json(err)
   }
 })
+
+router.patch(
+  '/:boardId',
+  isAuthenticated,
+  getCurrentUser,
+  isOwnerOfBoard,
+  async (req, res, next) => {
+    try {
+      const boardName = { name: req.body.name }
+      const newBoardName = await Board.findByIdAndUpdate(
+        req.params.boardId,
+        boardName,
+        {
+          new: true,
+        }
+      )
+      res.json(newBoardName)
+    } catch (err) {
+      res.json(err)
+    }
+  }
+)
 
 module.exports = router

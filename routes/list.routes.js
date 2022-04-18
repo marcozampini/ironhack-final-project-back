@@ -15,7 +15,6 @@ router.post(
       const listId = req.params.listId
       const nameId = req.body.name
       const nameExist = await Link.find({ name: nameId, list: listId })
-      console.log(nameExist)
 
       if (nameExist.length === 0) {
         const linkToCreate = req.body
@@ -43,7 +42,6 @@ router.delete(
       await Link.findOneAndDelete({ name: nameId, list: listId })
       res.status(204).send('ok')
     } catch (err) {
-      console.log(err)
       res.json(err)
     }
   }
