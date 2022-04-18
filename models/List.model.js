@@ -11,7 +11,8 @@ const listSchema = new Schema(
     owner: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     status : {
       type: String,
-      enum: ['pending', 'accepted', 'archived'],
+      enum: ['accepted', 'archived'],
+      default: 'accepted',
       required: true
     }
   },
