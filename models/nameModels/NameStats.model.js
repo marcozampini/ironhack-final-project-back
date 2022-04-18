@@ -1,5 +1,6 @@
 const { Schema, model } = require("mongoose");
-
+const Name = require('./Name.model')
+const Country = require('../Country.model')
 /*
   NameStats are used to count the number of times a name
   was given in a specific country, for male and female
