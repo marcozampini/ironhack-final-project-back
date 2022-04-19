@@ -14,7 +14,6 @@ function generateFakeListForABoard(quantity, boardId, allUsersId) {
     let list = {
       board: boardId,
       owner: randomUser,
-      status: 'pending',
     }
     lists.push(list)
   }

@@ -9,12 +9,6 @@ const listSchema = new Schema(
   {
     board: { type: Schema.Types.ObjectId, ref: 'Board', required: true },
     owner: { type: Schema.Types.ObjectId, ref: 'User', required: true },
-    status : {
-      type: String,
-      enum: ['accepted', 'archived'],
-      default: 'accepted',
-      required: true
-    }
   },
   {
     // this second object adds extra properties: `createdAt` and `updatedAt`
