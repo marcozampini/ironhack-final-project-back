@@ -203,13 +203,27 @@ router.delete(
     const targetedUser = req.params.userId
     const currentUserId = req.user._id
     try {
-
       const listToDelete = await List.findOne({
         $and: [{ board: board._id }, { owner: targetedUser }],
       })
-
-      if (board.owner.toString() === currentUserId || listToDelete?.owner?.toString() === currentUserId) {
-        await Link.deleteMany({ list: listToDelete._id});
+      if (!listToDelete) {
+        return res.status(httpStatus.NOT_FOUND).send('Participant not found')
+      }
+      if (
+        board.owner.toString() === currentUserId &&
+        listToDelete?.owner?.toString() === currentUserId
+      ) {
+        return res
+          .status(httpStatus.FORBIDDEN)
+          .send(
+            'Owner of a board cannot leave it, only delete the group all together'
+          )
+      }
+      if (
+        board.owner.toString() === currentUserId ||
+        listToDelete?.owner?.toString() === currentUserId
+      ) {
+        await Link.deleteMany({ list: listToDelete._id })
         await List.findByIdAndDelete(listToDelete._id)
       } else {
         return res
