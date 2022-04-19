@@ -114,7 +114,10 @@ router.get(
       const result = {
         _id: board._id,
         name: board.name,
-        owner: board.owner.username,
+        owner: {
+          _id: board.owner._id,
+          username: board.owner.username,
+        },
         isOwner: userIsBoardOwner,
         lists: resultLists,
       }
