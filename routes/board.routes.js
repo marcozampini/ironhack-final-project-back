@@ -33,7 +33,10 @@ router.get('/', isAuthenticated, getCurrentUser, async (req, res, next) => {
       return {
         _id: list.board._id,
         name: list.board.name,
-        owner: list.board.owner.username,
+        owner: {
+          _id: list.board.owner._id,
+          username: list.board.owner.username,
+        },
         isOwner: userIsBoardOwner,
       }
     })
@@ -82,7 +85,10 @@ router.get(
           }
           return {
             _id: list._id,
-            owner: list.owner.username,
+            owner: {
+              _id: list.owner._id,
+              username: list.owner.username,
+            },
             isOwner: userIsListOwner,
             names: names,
           }
