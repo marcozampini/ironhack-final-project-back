@@ -2,6 +2,7 @@ const router = require('express').Router()
 const { isAuthenticated } = require('../middleware/jwt.middleware')
 const { isOwnerOfBoard } = require('../middleware/isOwnerOfBoard.middleware')
 const { getCurrentUser } = require('../middleware/getCurrentUser.middleware')
+const { getCurrentBoard } = require('../middleware/getCurrentBoard.middleware')
 const Board = require('../models/Board.model')
 const List = require('../models/List.model')
 const Link = require('../models/Link.model')
@@ -162,6 +163,10 @@ router.patch(
   }
 )
 
+/**
+  Deletes a full board (with list and their links) when user it owner of it.
+*/
+
 router.delete(
   '/:boardId',
   isAuthenticated,
@@ -169,13 +174,50 @@ router.delete(
   isOwnerOfBoard,
   async (req, res, next) => {
     const board = req.targetedBoard
-    console.log(board)
     try {
       console.log(board)
-      const listsToDeleteIds = (await List.find({board: board._id})).map(l => l._id);
-      await Link.deleteMany({ list: {$in: listsToDeleteIds} })
-      await List.deleteMany({ _id: {$in: listsToDeleteIds} })
+      const listsToDeleteIds = (await List.find({ board: board._id })).map(
+        (l) => l._id
+      )
+      await Link.deleteMany({ list: { $in: listsToDeleteIds } })
+      await List.deleteMany({ _id: { $in: listsToDeleteIds } })
       await Board.findByIdAndDelete(board._id)
+      return res.sendStatus(httpStatus.NO_CONTENT)
+    } catch (err) {
+      return next(err)
+    }
+  }
+)
+
+/**
+  Deletes the participant from the board if the current user is the userId
+  or the board owner.
+*/
+router.delete(
+  '/:boardId/:userId',
+  isAuthenticated,
+  getCurrentUser,
+  getCurrentBoard,
+  async (req, res, next) => {
+    const board = req.targetedBoard
+    const targetedUser = req.params.userId
+    const currentUserId = req.user._id
+    try {
+
+      const listToDelete = await List.findOne({
+        $and: [{ board: board._id }, { owner: targetedUser }],
+      })
+
+      if (board.owner.toString() === currentUserId || listToDelete?.owner?.toString() === currentUserId) {
+        await Link.deleteMany({ list: listToDelete._id});
+        await List.findByIdAndDelete(listToDelete._id)
+      } else {
+        return res
+          .status(httpStatus.FORBIDDEN)
+          .send(
+            'User must be board owner, or try to delete its own board participation'
+          )
+      }
       return res.sendStatus(httpStatus.NO_CONTENT)
     } catch (err) {
       return next(err)
