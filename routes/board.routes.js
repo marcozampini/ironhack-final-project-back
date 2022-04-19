@@ -216,7 +216,7 @@ router.delete(
         return res
           .status(httpStatus.FORBIDDEN)
           .send(
-            'Owner of a board cannot leave it, only delete the group all together'
+            'Owner of a board cannot leave it, only delete the board all together'
           )
       }
       if (
