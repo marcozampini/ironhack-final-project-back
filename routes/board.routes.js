@@ -67,7 +67,6 @@ router.get(
       const board = await Board.findOne({ _id: boardId }).populate('owner')
       const lists = await List.find({ board: boardId }).populate('owner')
 
-      let userIsListOwner
       const resultLists = await Promise.all(
         lists.map(async (list) => {
           const links = await Link.find({ list: list._id }).populate('name')
@@ -78,18 +77,13 @@ router.get(
               weight: link.weight,
             }
           })
-          if (list.owner._id.toString() === ownerId) {
-            userIsListOwner = true
-          } else {
-            userIsListOwner = false
-          }
           return {
             _id: list._id,
             owner: {
               _id: list.owner._id,
               username: list.owner.username,
             },
-            isOwner: userIsListOwner,
+            isOwner: list.owner._id.toString() === ownerId,
             names: names,
           }
         })
@@ -104,13 +98,6 @@ router.get(
         return 0
       })
 
-      let userIsBoardOwner
-      if (board.owner._id.toString() === ownerId) {
-        userIsBoardOwner = true
-      } else {
-        userIsBoardOwner = false
-      }
-
       const result = {
         _id: board._id,
         name: board.name,
@@ -118,7 +105,7 @@ router.get(
           _id: board.owner._id,
           username: board.owner.username,
         },
-        isOwner: userIsBoardOwner,
+        isOwner: board.owner._id.toString() === ownerId,
         lists: resultLists,
       }
       res.send(result)
