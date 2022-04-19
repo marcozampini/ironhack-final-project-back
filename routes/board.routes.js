@@ -36,6 +36,7 @@ router.get('/', isAuthenticated, getCurrentUser, async (req, res, next) => {
         owner: {
           _id: list.board.owner._id,
           username: list.board.owner.username,
+          avatarUrl: list.board.owner.avatarUrl,
         },
         isOwner: userIsBoardOwner,
       }
@@ -82,6 +83,7 @@ router.get(
             owner: {
               _id: list.owner._id,
               username: list.owner.username,
+              avatarUrl: list.owner.avatarUrl,
             },
             isOwner: list.owner._id.toString() === ownerId,
             names: names,
@@ -104,6 +106,7 @@ router.get(
         owner: {
           _id: board.owner._id,
           username: board.owner.username,
+          avatarUrl: board.owner.avatarUrl,
         },
         isOwner: board.owner._id.toString() === ownerId,
         lists: resultLists,
