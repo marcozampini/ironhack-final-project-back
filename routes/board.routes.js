@@ -176,7 +176,7 @@ router.post(
       const myLists = await List.find({ owner: userId, board: boardId })
       if (myLists.length === 0) {
         const newList = await List.create({ owner: userId, board: boardId })
-        res.status(200).send('ok')
+        res.status(201).send('User is added to the board')
       } else {
         return res
           .status(httpStatus.UNAUTHORIZED)
