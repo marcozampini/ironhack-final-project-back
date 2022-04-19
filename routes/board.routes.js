@@ -10,6 +10,7 @@ const User = require('../models/User.model')
 const {
   isParticipantOfBoard,
 } = require('../middleware/isParticipantOfBoard.middleware')
+const { isOwnerOfBoard } = require('../middleware/isOwnerOfBoard.middleware')
 const httpStatus = require('http-status')
 
 /* GET all boards for the current user */
@@ -21,6 +22,7 @@ router.get('/', isAuthenticated, getCurrentUser, async (req, res, next) => {
       path: 'board',
       populate: { path: 'owner' },
     })
+    console.log(lists)
     const result = lists.map((list) => {
       if (list.board.owner._id.toString() === ownerId) {
         userIsBoardOwner = true
@@ -81,7 +83,6 @@ router.get(
             _id: list._id,
             owner: list.owner.username,
             isOwner: userIsListOwner,
-            status: list.status,
             names: names,
           }
         })
@@ -130,10 +131,6 @@ router.post('/', isAuthenticated, getCurrentUser, async (req, res, next) => {
       owner,
       name,
     })
-    await List.create({
-      board: newBoard._id,
-      owner,
-    })
     res.status(httpStatus.CREATED).send(newBoard)
   } catch (err) {
     res.json(err)
@@ -158,6 +155,25 @@ router.patch(
       res.json(newBoardName)
     } catch (err) {
       res.json(err)
+    }
+  }
+)
+
+router.delete(
+  '/:boardId',
+  isAuthenticated,
+  getCurrentUser,
+  isOwnerOfBoard,
+  async (req, res, next) => {
+    const board = req.targetedBoard
+    console.log(board)
+    try {
+      console.log(board)
+      await List.deleteMany({ board: board._id })
+      await Board.findByIdAndDelete(board._id)
+      return res.sendStatus(httpStatus.NO_CONTENT)
+    } catch (err) {
+      return next(err)
     }
   }
 )
