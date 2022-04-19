@@ -8,6 +8,7 @@ const List = require('../models/List.model')
 const Link = require('../models/Link.model')
 const Name = require('../models/nameModels/Name.model')
 const User = require('../models/User.model')
+const mongoose = require('mongoose')
 const {
   isParticipantOfBoard,
 } = require('../middleware/isParticipantOfBoard.middleware')
@@ -164,7 +165,38 @@ router.patch(
 )
 
 /**
-  Deletes a full board (with list and their links) when user it owner of it.
+  Add a user to a board if the user exists in the db and doesn't own another list in the board.
+*/
+
+router.post(
+  '/:boardId/:userId',
+  isAuthenticated,
+  getCurrentUser,
+  isOwnerOfBoard,
+  async (req, res, next) => {
+    const { userId } = req.params
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      res.status(400).json({ message: 'UserId does not exist' })
+      return
+    }
+    const userExist = await User.exists({ _id: userId })
+    if (userExist) {
+      const { boardId } = req.params
+      const myLists = await List.find({ owner: userId, board: boardId })
+      if (myLists.length === 0) {
+        const newList = await List.create({ owner: userId, board: boardId })
+        res.status(201).send('User is added to the board')
+      } else {
+        return res
+          .status(httpStatus.UNAUTHORIZED)
+          .send('User is participant in the targeted board')
+      }
+    }
+  }
+)
+
+/**
+  Deletes a full board (with list and their links) when user it is owner of it.
 */
 
 router.delete(
