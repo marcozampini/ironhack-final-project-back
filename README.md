@@ -53,6 +53,12 @@ node db/seeds/boards.seed.js
 node db/seeds/lists.seed.js
 ```
 
+- Create links between names and lists:
+
+```shell
+node db/seeds/links.seed.js
+```
+
 - Seed all at once, in the right order. Note it will take some time because of the names seeding:
 
 ```shell
@@ -61,12 +67,6 @@ node db/seeds/countries.seed.js ;\
 node db/seeds/names.seed.js ;\
 node db/seeds/boards.seed.js ;\
 node db/seeds/lists.seed.js ;\
-node db/seeds/links.seed.js
-```
-
-- Create links between names and lists:
-
-```shell
 node db/seeds/links.seed.js
 ```
 
