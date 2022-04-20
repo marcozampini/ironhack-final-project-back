@@ -199,7 +199,6 @@ router.delete(
   async (req, res, next) => {
     const board = req.targetedBoard
     try {
-      console.log(board)
       const listsToDeleteIds = (await List.find({ board: board._id })).map(
         (l) => l._id
       )
