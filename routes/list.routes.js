@@ -31,14 +31,13 @@ router.post(
 )
 
 router.delete(
-  '/:listId/',
+  '/:listId/:nameId',
   isAuthenticated,
   getCurrentUser,
   isOwnerOfList,
   async (req, res, next) => {
     try {
-      const { listId } = req.params
-      const nameId = req.body.name
+      const { listId, nameId } = req.params
       await Link.findOneAndDelete({ name: nameId, list: listId })
       res.status(204).send('ok')
     } catch (err) {

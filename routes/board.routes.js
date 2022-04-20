@@ -18,23 +18,20 @@ const httpStatus = require('http-status')
 router.get('/', isAuthenticated, getCurrentUser, async (req, res, next) => {
   const ownerId = req.user._id
   try {
-    let userIsBoardOwner
     const lists = await List.find({ owner: ownerId }).populate({
       path: 'board',
       populate: { path: 'owner' },
     })
-    console.log(lists)
     const result = lists.map((list) => {
-      if (list.board.owner._id.toString() === ownerId) {
-        userIsBoardOwner = true
-      } else {
-        userIsBoardOwner = false
-      }
       return {
         _id: list.board._id,
         name: list.board.name,
-        owner: list.board.owner.username,
-        isOwner: userIsBoardOwner,
+        owner: {
+          _id: list.board.owner._id,
+          username: list.board.owner.username,
+          avatarUrl: list.board.owner.avatarUrl,
+        },
+        isOwner: list.board.owner._id.toString() === ownerId,
       }
     })
     result.sort((a, b) => {
@@ -64,7 +61,6 @@ router.get(
       const board = await Board.findOne({ _id: boardId }).populate('owner')
       const lists = await List.find({ board: boardId }).populate('owner')
 
-      let userIsListOwner
       const resultLists = await Promise.all(
         lists.map(async (list) => {
           const links = await Link.find({ list: list._id }).populate('name')
@@ -75,15 +71,14 @@ router.get(
               weight: link.weight,
             }
           })
-          if (list.owner._id.toString() === ownerId) {
-            userIsListOwner = true
-          } else {
-            userIsListOwner = false
-          }
           return {
             _id: list._id,
-            owner: list.owner.username,
-            isOwner: userIsListOwner,
+            owner: {
+              _id: list.owner._id,
+              username: list.owner.username,
+              avatarUrl: list.owner.avatarUrl,
+            },
+            isOwner: list.owner._id.toString() === ownerId,
             names: names,
           }
         })
@@ -98,18 +93,15 @@ router.get(
         return 0
       })
 
-      let userIsBoardOwner
-      if (board.owner._id.toString() === ownerId) {
-        userIsBoardOwner = true
-      } else {
-        userIsBoardOwner = false
-      }
-
       const result = {
         _id: board._id,
         name: board.name,
-        owner: board.owner.username,
-        isOwner: userIsBoardOwner,
+        owner: {
+          _id: board.owner._id,
+          username: board.owner.username,
+          avatarUrl: board.owner.avatarUrl,
+        },
+        isOwner: board.owner._id.toString() === ownerId,
         lists: resultLists,
       }
       res.send(result)
