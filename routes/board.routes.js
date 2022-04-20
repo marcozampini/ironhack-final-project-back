@@ -18,18 +18,12 @@ const httpStatus = require('http-status')
 router.get('/', isAuthenticated, getCurrentUser, async (req, res, next) => {
   const ownerId = req.user._id
   try {
-    let userIsBoardOwner
     const lists = await List.find({ owner: ownerId }).populate({
       path: 'board',
       populate: { path: 'owner' },
     })
     console.log(lists)
     const result = lists.map((list) => {
-      if (list.board.owner._id.toString() === ownerId) {
-        userIsBoardOwner = true
-      } else {
-        userIsBoardOwner = false
-      }
       return {
         _id: list.board._id,
         name: list.board.name,
@@ -38,7 +32,7 @@ router.get('/', isAuthenticated, getCurrentUser, async (req, res, next) => {
           username: list.board.owner.username,
           avatarUrl: list.board.owner.avatarUrl,
         },
-        isOwner: userIsBoardOwner,
+        isOwner: list.board.owner._id.toString() === ownerId,
       }
     })
     result.sort((a, b) => {
