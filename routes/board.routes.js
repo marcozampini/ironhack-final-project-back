@@ -22,7 +22,6 @@ router.get('/', isAuthenticated, getCurrentUser, async (req, res, next) => {
       path: 'board',
       populate: { path: 'owner' },
     })
-    console.log(lists)
     const result = lists.map((list) => {
       return {
         _id: list.board._id,
