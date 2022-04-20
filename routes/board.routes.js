@@ -22,7 +22,6 @@ router.get('/', isAuthenticated, getCurrentUser, async (req, res, next) => {
       path: 'board',
       populate: { path: 'owner' },
     })
-    console.log(lists)
     const result = lists.map((list) => {
       if (list.board.owner._id.toString() === ownerId) {
         userIsBoardOwner = true
@@ -175,7 +174,6 @@ router.delete(
   async (req, res, next) => {
     const board = req.targetedBoard
     try {
-      console.log(board)
       const listsToDeleteIds = (await List.find({ board: board._id })).map(
         (l) => l._id
       )
