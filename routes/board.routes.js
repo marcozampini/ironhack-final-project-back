@@ -6,7 +6,6 @@ const { getCurrentBoard } = require('../middleware/getCurrentBoard.middleware')
 const Board = require('../models/Board.model')
 const List = require('../models/List.model')
 const Link = require('../models/Link.model')
-const Name = require('../models/nameModels/Name.model')
 const User = require('../models/User.model')
 const mongoose = require('mongoose')
 const {
