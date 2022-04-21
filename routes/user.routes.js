@@ -6,11 +6,17 @@ const authRoutes = require('./auth.routes')
 const status = require('http-status')
 const req = require('express/lib/request')
 
+function escapeRegex(input) {
+  if (input) {
+    return input.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')
+  }
+}
+
 router.get('/', isAuthenticated, async (req, res, next) => {
-  const searchTerm = req.query.q;
+  const searchTerm = escapeRegex(req.query.q)
   if (searchTerm) {
     const users = await User.find({
-      username: new RegExp(`${searchTerm}`),
+      username: new RegExp(`${searchTerm}`, 'i'),
     })
     const result = users.map((user) => {
       return {
