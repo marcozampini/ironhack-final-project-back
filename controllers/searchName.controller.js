@@ -10,9 +10,15 @@ const NameStats = require('../models/nameModels/NameStats.model')
 		initial-query: string -> 'a,b,e,i' -> starting with one of them
 */
 
+
+function escapeRegex(input) {
+  return input.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+}
+
 function generateRegex(query, mode) {
   mode = mode ? mode : ''
   query = query.toUpperCase()
+  query = escapeRegex(query)
 
   switch (mode) {
     case 'soft':
