@@ -1,6 +1,7 @@
 const httpStatus = require('http-status')
 const Name = require('../models/nameModels/Name.model')
 const NameStats = require('../models/nameModels/NameStats.model')
+const escapeRegex = require('../utils/escapeRegex')
 
 /*
 	q: string -> the query
@@ -9,11 +10,6 @@ const NameStats = require('../models/nameModels/NameStats.model')
 		soft-query: string -> has 'marco'
 		initial-query: string -> 'a,b,e,i' -> starting with one of them
 */
-
-
-function escapeRegex(input) {
-  return input.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
-}
 
 function generateRegex(query, mode) {
   mode = mode ? mode : ''

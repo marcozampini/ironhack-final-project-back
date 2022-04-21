@@ -5,12 +5,7 @@ const User = require('../models/User.model')
 const authRoutes = require('./auth.routes')
 const status = require('http-status')
 const req = require('express/lib/request')
-
-function escapeRegex(input) {
-  if (input) {
-    return input.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')
-  }
-}
+const escapeRegex = require('../utils/escapeRegex')
 
 router.get('/', isAuthenticated, async (req, res, next) => {
   const searchTerm = escapeRegex(req.query.q)
