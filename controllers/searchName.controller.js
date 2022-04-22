@@ -13,6 +13,8 @@ const escapeRegex = require('../utils/escapeRegex')
 
 function generateRegex(query, mode) {
   mode = mode ? mode : ''
+  query = query ? query : ''
+
   query = query.toUpperCase()
   query = escapeRegex(query)
 
@@ -36,40 +38,49 @@ function generateRegex(query, mode) {
   Generate the length filter part of the query
 */
 
-function generateQueryOptions(minLen, maxLen) {
-  let searchOptions = {}
-  if (minLen && maxLen) {
-    searchOptions = {
-      $where: `this.value.length >= ${minLen} && this.value.length <= ${maxLen}`,
-    }
-  } else if (minLen) {
-    searchOptions = {
-      $where: `this.value.length >= ${minLen}`,
-    }
-  } else if (maxLen) {
-    searchOptions = {
-      $where: `this.value.length <= ${maxLen}`,
-    }
+function generateQuery(regex, minLen, maxLen) {
+  const conditions = []
+
+  if (regex) {
+    conditions.push({ value: { $regex: regex, $options: 'i' } })
   }
-  return searchOptions
+  if (minLen) {
+    conditions.push({
+      $expr: { $gte: [{ $strLenCP: '$value' }, parseInt(minLen)] },
+    })
+  }
+  if (maxLen) {
+    conditions.push({
+      $expr: { $lte: [{ $strLenCP: '$value' }, parseInt(maxLen)] },
+    })
+  }
+  console.log('SEARCH', JSON.stringify(conditions, null, 4))
+  return {
+    $and: conditions,
+  }
 }
 
 async function searchNames(req, res) {
   const { q: query, mode, minlen: minLen, maxlen: maxLen } = req.query
 
-  let searchOption = generateQueryOptions(minLen, maxLen)
-
-  const searchRegex = query ? generateRegex(query, mode) : ''
-  if (searchRegex) {
-    searchOption.value = searchRegex
-  } else if (searchRegex === null) {
+  const searchRegex = generateRegex(query, mode)
+  if (searchRegex === null) {
     return res
       .status(httpStatus.BAD_REQUEST)
       .send(
         'invalid Mode parameter, options are strict (default), soft, initial'
       )
   }
-  const namesIds = (await Name.find(searchOption)).map((n) => n._id)
+
+  let searchOption = generateQuery(searchRegex, minLen, maxLen)
+  if (!searchOption) {
+    return res
+      .status(httpStatus.BAD_REQUEST)
+      .send(
+        'invalid Mode parameter, options are strict (default), soft, initial'
+      )
+  }
+  const namesIds = (await Name.find(searchOption).limit(100)).map((n) => n._id)
 
   const results = await NameStats.aggregate([
     { $match: { name: { $in: namesIds } } },
