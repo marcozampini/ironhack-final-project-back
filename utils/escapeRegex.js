@@ -1,7 +1,5 @@
 const escapeRegex = function (input) {
-  if (input) {
-    return input.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')
-  }
+  return input ? input.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&') : input
 }
 
 module.exports = escapeRegex
