@@ -79,6 +79,9 @@ router.get('/:nameId', async (req, res, next) => {
 router.get('/tops/:cca3', async (req, res, next) => {
   const cca3 = req.params?.cca3.toUpperCase()
   const limit = req.query?.limit || 100
+  if (limit < 1 || limit > 1000) {
+    return res.status(httpStatus.BAD_REQUEST).send('Limit cannot be lower than 1 or greater than 1000')
+  }
 
   if (!cca3 || !cca3.length) {
     return res.sendStatus(httpStatus.BAD_REQUEST)
