@@ -11,49 +11,57 @@ const seedOneStat = async (nameData, nameId, countryId) => {
     name: nameId,
     country: countryId,
   }
-  newStat[nameData.gender === 'm' ? 'mCount' : 'fCount'] = nameData.count;
+  const countField = nameData.gender === 'm' ? 'mCount' : 'fCount'
 
-  return await NameStats.findOneAndUpdate({
-    $and: [
-      { name: nameId },
-      { country: countryId },
-    ]
-  }, newStat, { new: true, upsert: true });
+  newStat[countField] = nameData.count
 
+  const existingNameStat = await NameStats.findOne({
+    $and: [{ name: nameId }, { country: countryId }],
+  })
+
+  if (existingNameStat) {
+    newStat[countField] += existingNameStat[countField]
+    return await NameStats.findByIdAndUpdate(existingNameStat._id, newStat)
+  } else {
+    return await NameStats.create(newStat)
+  }
 }
 
 const seedOneName = async (nameData) => {
-  if (typeof nameData?.name === 'string' && !nameData.name.includes(' ') ) {
-    nameData.name = nameData.name.toUpperCase();
-    const savedName = await Name
-      .findOneAndUpdate({ value: nameData.name }, {
-        value: nameData.value
-      }, {
+  if (typeof nameData?.name === 'string' && !nameData.name.includes(' ')) {
+    nameData.name = nameData.name.toUpperCase()
+    const savedName = await Name.findOneAndUpdate(
+      { value: nameData.name },
+      {
+        value: nameData.value,
+      },
+      {
         new: true,
-        upsert: true
-      });
+        upsert: true,
+      }
+    )
 
-    console.log(`Seeded new NAME: ${savedName._id} -> ${savedName.value}`);
+    console.log(`Seeded new NAME: ${savedName._id} -> ${savedName.value}`)
 
-    const country = await Country.findOne({ cca3: nameData.country });
+    const country = await Country.findOne({ cca3: nameData.country })
     if (country) {
-      const stat = await seedOneStat(nameData, savedName._id, country._id);
-      console.log(`Seeded ${stat._id} for ${savedName.value}, count is [f]${stat?.fCount} / [m]${stat?.mCount} .`);
+      const stat = await seedOneStat(nameData, savedName._id, country._id)
+      console.log(
+        `Seeded ${stat._id} for ${savedName.value}, count is [f]${stat?.fCount} / [m]${stat?.mCount} .`
+      )
     }
   } else {
-    console.log(`⛔️ Not seeding ${nameData.name}, ${nameData.count}`);
+    console.log(`⛔️ Not seeding ${nameData.name}, ${nameData.count}`)
   }
 }
 
 const perform = async () => {
   try {
-    await connect();
-    await Promise.all(
-      namesBatchData.map(item => seedOneName(item))
-    );
+    await connect()
+    await Promise.all(namesBatchData.map((item) => seedOneName(item)))
     await mongoose.connection.close()
   } catch (error) {
-    console.log('Could not perform seeding : ', error);
+    console.log('Could not perform seeding : ', error)
   }
 }
 
