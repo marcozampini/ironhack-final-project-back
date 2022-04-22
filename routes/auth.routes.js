@@ -50,7 +50,7 @@ router.post('/signup', (req, res) => {
           email,
           username,
           password: hashedPassword,
-          avatarUrl: `https://avatars.dicebear.com/api/adventurer/${Math.floor(
+          avatarUrl: `https://avatars.dicebear.com/api/micah/${Math.floor(
             Math.random() * 10000000000000
           ).toString()}.svg`,
         })

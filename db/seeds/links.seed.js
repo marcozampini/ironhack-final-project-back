@@ -12,7 +12,7 @@ function generateLinksForOneList(quantity, listId, names) {
   const links = [];
   for (let j = 0; j < quantity; j++) {
     const randomName = names[Math.floor(Math.random() * names.length)];
-    const randomWeight = Math.floor(Math.random() * 11) - 1
+    const randomWeight = Math.floor(Math.random() * 5) - 1
     let link = {
       list: listId,
       name: randomName._id,
@@ -32,7 +32,7 @@ async function generateLinks() {
   const names = await Name.find();
 
   for (let i = 0; i < listIds.length; i++) {
-    const randomQuantity = Math.floor(Math.random() * 5) + 5
+    const randomQuantity = Math.floor(Math.random() * 8) + 3
     console.log(`✅ Seeding ${randomQuantity} links for the list ${listIds[i]}`);
     const currentListLinks = generateLinksForOneList(randomQuantity, listIds[i], names)
     links = [...links, ...currentListLinks];

@@ -14,7 +14,7 @@ function generateFakeUsers(quantity) {
     let user = {
       email: faker.internet.email(),
       username: `${usernameValue}_fake`,
-      avatarUrl: `https://avatars.dicebear.com/api/adventurer/${usernameValue}.svg`,
+      avatarUrl: `https://avatars.dicebear.com/api/micah/${usernameValue}.svg`,
       password: "$2b$10$wN27fSja8gOfp.OFfULH9./pUZ0sYjtd2RX10CHT230WbDLo0RfV2",
     };
     users.push(user);

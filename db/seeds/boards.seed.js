@@ -8,7 +8,7 @@ const Board = require('../../models/Board.model')
 function generateOneBoard(owner) {
   return {
     owner: owner._id,
-    name: `${faker.word.noun()}_fake`,
+    name: `${faker.word.adjective(5)}_fake`,
   }
 }
 
