@@ -5,6 +5,9 @@ const Link = require('../models/Link.model')
 const List = require('../models/List.model')
 const router = require('express').Router()
 
+/**
+ * Route to add a name to a given list
+ */
 router.post(
   '/:listId',
   isAuthenticated,
@@ -30,6 +33,10 @@ router.post(
   }
 )
 
+/**
+ * Route to delete a given list, if the current User is the owner of the board
+ * this list is attached to, or alternatively the owner of the list itself
+ */
 router.delete(
   '/:listId/:nameId',
   isAuthenticated,

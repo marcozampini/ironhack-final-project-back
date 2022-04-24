@@ -13,7 +13,10 @@ const {
 } = require('../middleware/isParticipantOfBoard.middleware')
 const httpStatus = require('http-status')
 
-/* GET all boards for the current user */
+/**
+ * Route to retrieve all the board for the current User: owned boards
+ * and board in which they are participating
+ */
 router.get('/', isAuthenticated, getCurrentUser, async (req, res, next) => {
   const ownerId = req.user._id
   try {
@@ -47,6 +50,10 @@ router.get('/', isAuthenticated, getCurrentUser, async (req, res, next) => {
     res.json(err)
   }
 })
+
+/**
+ * Route to get the full details of a given board, targeted by the url param
+ */
 
 router.get(
   '/:boardId',
@@ -110,6 +117,9 @@ router.get(
   }
 )
 
+/**
+ * Route to create a new board, with a given name passed in the body
+ */
 router.post('/', isAuthenticated, getCurrentUser, async (req, res, next) => {
   const owner = req.user._id
   const { name } = req.body
@@ -133,6 +143,9 @@ router.post('/', isAuthenticated, getCurrentUser, async (req, res, next) => {
   }
 })
 
+/**
+ * Route to update the name of a given board, target in the url parameter
+ */
 router.patch(
   '/:boardId',
   isAuthenticated,
@@ -156,7 +169,8 @@ router.patch(
 )
 
 /**
-  Add a user to a board if the user exists in the db and doesn't own another list in the board.
+ * Rout to add a user to a board if the user exists in the db and doesn't already
+ * own another list in the board.
 */
 
 router.post(

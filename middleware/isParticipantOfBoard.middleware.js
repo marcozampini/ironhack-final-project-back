@@ -3,6 +3,10 @@ const List = require('../models/List.model')
 
 const httpStatus = require('http-status')
 
+/**
+ * Thanks to the currentUser middleware, protects routes
+ * from being accessed when the user does own a list in the board targeted
+ */
 async function isParticipantOfBoard(req, res, next) {
   try {
     const { boardId } = req.params

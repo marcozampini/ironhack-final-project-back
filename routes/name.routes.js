@@ -7,7 +7,7 @@ const Country = require('../models/Country.model')
 const ObjectID = require('mongodb').ObjectID
 
 /*
-  Returns a list of names based on research criteria:
+  Route to get a list of names based on research criteria:
 
   q: string -> the query
   mode=
@@ -60,8 +60,8 @@ router.get('/:nameId', async (req, res, next) => {
 
     output.totalCounts = results.reduce(
       (prev, current) => {
-        prev.mCount += current?.mCount || 0
-        prev.fCount += current?.fCount || 0
+        prev.mCount += current?.mCount || 0;
+        prev.fCount += current?.fCount || 0;
         return prev
       },
       { mCount: 0, fCount: 0 }
@@ -75,6 +75,14 @@ router.get('/:nameId', async (req, res, next) => {
     next(error)
   }
 })
+
+/**
+ * Route to get the X top names for a given country based on a CCA3 targeted
+ * in the url param
+ * Ex: to 20 names for Italia: /names/top/ITA/20
+ * The number is optional and limited to a range of [1-1000] excluded.
+ * Default is 100.
+ */
 
 router.get('/tops/:cca3', async (req, res, next) => {
   const cca3 = req.params?.cca3.toUpperCase()
