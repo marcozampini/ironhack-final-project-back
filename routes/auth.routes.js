@@ -126,6 +126,9 @@ router.post('/login', (req, res, next) => {
     })
 })
 
+/**
+ * Route for the front-end to verify the currently hold token
+ */
 router.get('/verify', isAuthenticated, (req, res, next) => {
   res.status(200).json(req.payload)
 })

@@ -2,6 +2,10 @@ const jwt_decode = require('jwt-decode')
 const Board = require('../models/Board.model')
 const status = require('http-status')
 
+/**
+ * Thanks to the currentUser and getCurrentBoard middlewares, protects routes
+ * from being accessed when the user does not own the board.
+ */
 async function isOwnerOfBoard(req, res, next) {
   try {
     const board = await Board.findById(req.params.boardId)

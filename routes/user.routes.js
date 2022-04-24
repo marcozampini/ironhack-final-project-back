@@ -7,6 +7,10 @@ const status = require('http-status')
 const req = require('express/lib/request')
 const escapeRegex = require('../utils/escapeRegex')
 
+/**
+ * Route to query the database for usernames, returning public infos
+ *  for the found users based on lexicographic search
+ */
 router.get('/', isAuthenticated, async (req, res, next) => {
   const searchTerm = escapeRegex(req.query.q)
   if (searchTerm) {

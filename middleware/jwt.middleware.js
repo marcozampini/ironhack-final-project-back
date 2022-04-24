@@ -1,14 +1,16 @@
 const jwt = require('express-jwt')
 
+/**
+ * Extracts the JWT from the headed and check for validity to protect access
+ * to routes for which user has to be authenticated
+ */
+
 const isAuthenticated = jwt({
   secret: process.env.TOKEN_SECRET,
   algorithms: ['HS256'],
   requestProperty: 'payload',
   getToken: getTokenFromHeaders,
 })
-
-// Function used to extracts the JWT token from the request's 'Authorization' Headers
-// Authorization: Bearer <JWT>
 
 function getTokenFromHeaders(req) {
   // Check if the token is available on the request Headers

@@ -60,8 +60,8 @@ router.get('/:nameId', async (req, res, next) => {
 
     output.totalCounts = results.reduce(
       (prev, current) => {
-        prev.mCount += current?.mCount || 0
-        prev.fCount += current?.fCount || 0
+        prev.mCount += current?.mCount || 0;
+        prev.fCount += current?.fCount || 0;
         return prev
       },
       { mCount: 0, fCount: 0 }
