@@ -1,4 +1,4 @@
-const { Schema, model } = require("mongoose");
+const { Schema, model } = require('mongoose')
 
 /*
   Name is used to store a given string (a name) and reference it
@@ -9,15 +9,16 @@ const nameSchema = new Schema(
   {
     value: {
       type: String,
-      required: true
+      unique: true,
+      required: true,
     },
   },
   {
     // this second object adds extra properties: `createdAt` and `updatedAt`
     timestamps: true,
   }
-);
+)
 
-const Name = model("Name", nameSchema);
+const Name = model('Name', nameSchema)
 
-module.exports = Name;
+module.exports = Name
