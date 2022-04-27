@@ -33,7 +33,7 @@ const seedOneName = async (nameData) => {
     const savedName = await Name.findOneAndUpdate(
       { value: nameData.name },
       {
-        value: nameData.value,
+        value: nameData.name,
       },
       {
         new: true,
