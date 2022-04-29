@@ -65,6 +65,10 @@ router.get('/:nameId', async (req, res, next) => {
       } else {
         outputCountriesIds.push(stat.country._id)
 
+        delete stat.country._doc.name.official
+        delete stat.country._doc.translations
+        delete stat.country._doc.latlng
+
         stat.country._doc.stats = []
         stat.country._doc.stats.push({
           gender: stat.gender,
