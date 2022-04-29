@@ -118,12 +118,18 @@ router.get('/tops/:cca3', async (req, res, next) => {
     if (!country) {
       return res.sendStatus(httpStatus.NOT_FOUND)
     }
-    const topBoysNames = await NameStats.find({ country: country._id })
-      .sort({ mCount: -1 })
+    const topBoysNames = await NameStats.find({
+      country: country._id,
+      gender: 'm',
+    })
+      .sort({ count: -1 })
       .limit(limit)
       .populate('name')
-    const topGirlsNames = await NameStats.find({ country: country._id })
-      .sort({ fCount: -1 })
+    const topGirlsNames = await NameStats.find({
+      country: country._id,
+      gender: 'f',
+    })
+      .sort({ count: -1 })
       .limit(limit)
       .populate('name')
 
