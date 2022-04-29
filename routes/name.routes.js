@@ -4,7 +4,6 @@ const searchNames = require('../controllers/searchName.controller')
 const httpStatus = require('http-status')
 const NameStats = require('../models/nameModels/NameStats.model')
 const Country = require('../models/Country.model')
-const ObjectID = require('mongodb').ObjectID
 
 /*
   Route to get a list of names based on research criteria:
@@ -50,22 +49,36 @@ router.get('/:nameId', async (req, res, next) => {
       id: results[0].name._id,
       value: results[0].name.value,
       countries: [],
+      totalCounts: { mCount: 0, fCount: 0 },
     }
-    results.forEach((stat) => {
-      stat.country._doc.mCount = stat.mCount
-      stat.country._doc.fCount = stat.fCount
-      console.log('STATS COUNTRY', stat.country)
-      output.countries.push(stat.country)
-    })
 
-    output.totalCounts = results.reduce(
-      (prev, current) => {
-        prev.mCount += current?.mCount || 0;
-        prev.fCount += current?.fCount || 0;
-        return prev
-      },
-      { mCount: 0, fCount: 0 }
-    )
+    let outputCountriesIds = []
+    results.forEach((stat) => {
+      if (outputCountriesIds.includes(stat.country._id)) {
+        let arrayId = outputCountriesIds.indexOf(stat.country._id)
+
+        output.countries[arrayId]._doc.stats.push({
+          gender: stat.gender,
+          count: stat.count,
+          rank: stat.rank,
+        })
+      } else {
+        outputCountriesIds.push(stat.country._id)
+
+        stat.country._doc.stats = []
+        stat.country._doc.stats.push({
+          gender: stat.gender,
+          count: stat.count,
+          rank: stat.rank,
+        })
+        output.countries.push(stat.country)
+      }
+      if (stat.gender === 'f') {
+        output.totalCounts.fCount += stat.count
+      } else {
+        output.totalCounts.mCount += stat.count
+      }
+    })
 
     return res.status(httpStatus.OK).send(output)
   } catch (error) {
@@ -88,7 +101,9 @@ router.get('/tops/:cca3', async (req, res, next) => {
   const cca3 = req.params?.cca3.toUpperCase()
   const limit = req.query?.limit || 100
   if (limit < 1 || limit > 1000) {
-    return res.status(httpStatus.BAD_REQUEST).send('Limit cannot be lower than 1 or greater than 1000')
+    return res
+      .status(httpStatus.BAD_REQUEST)
+      .send('Limit cannot be lower than 1 or greater than 1000')
   }
 
   if (!cca3 || !cca3.length) {
