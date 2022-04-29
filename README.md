@@ -23,12 +23,6 @@ npm install
 
 ### Seed the database
 
-- Create fake users:
-
-```shell
-node db/seeds/users.seed.js
-```
-
 - Add the countries:
 
 ```shell
@@ -39,6 +33,12 @@ node db/seeds/countries.seed.js
 
 ```shell
 node db/seeds/names.seed.js
+```
+
+- Create fake users:
+
+```shell
+node db/seeds/users.seed.js
 ```
 
 - Create fake boards:
@@ -59,12 +59,12 @@ node db/seeds/lists.seed.js
 node db/seeds/links.seed.js
 ```
 
-- Seed all at once, in the right order. Note it will take some time because of the names seeding:
+- Seed all at once, in the right order. Note that it will take some time because of the names seeding:
 
 ```shell
-node db/seeds/users.seed.js ;\
 node db/seeds/countries.seed.js ;\
 node db/seeds/names.seed.js ;\
+node db/seeds/users.seed.js ;\
 node db/seeds/boards.seed.js ;\
 node db/seeds/lists.seed.js ;\
 node db/seeds/links.seed.js
