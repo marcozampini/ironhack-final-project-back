@@ -10,21 +10,11 @@ const seedOneStat = async (nameData, nameId, countryId) => {
   const newStat = {
     name: nameId,
     country: countryId,
+    gender: nameData.gender,
+    count: nameData.count,
+    rank: nameData.rank,
   }
-  const countField = nameData.gender === 'm' ? 'mCount' : 'fCount'
-
-  newStat[countField] = nameData.count
-
-  const existingNameStat = await NameStats.findOne({
-    $and: [{ name: nameId }, { country: countryId }],
-  })
-
-  if (existingNameStat) {
-    newStat[countField] += existingNameStat[countField]
-    return await NameStats.findByIdAndUpdate(existingNameStat._id, newStat)
-  } else {
-    return await NameStats.create(newStat)
-  }
+  return await NameStats.create(newStat)
 }
 
 const seedOneName = async (nameData) => {
@@ -47,7 +37,7 @@ const seedOneName = async (nameData) => {
     if (country) {
       const stat = await seedOneStat(nameData, savedName._id, country._id)
       console.log(
-        `Seeded ${stat._id} for ${savedName.value}, count is [f]${stat?.fCount} / [m]${stat?.mCount} .`
+        `Seeded ${stat._id} for ${savedName.value}, gender ${stat?.gender}, count ${stat?.count}, rank ${stat?.rank}.`
       )
     }
   } else {
