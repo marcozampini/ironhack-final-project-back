@@ -2,6 +2,7 @@ const httpStatus = require('http-status')
 const Name = require('../models/nameModels/Name.model')
 const NameStats = require('../models/nameModels/NameStats.model')
 const escapeRegex = require('../utils/escapeRegex')
+const removeDiacritics = require('../utils/removeDiacritics')
 
 /*
 	q: string -> the query
@@ -15,7 +16,7 @@ function generateRegex(query, mode) {
   mode = mode ? mode : ''
   query = query ? query : ''
 
-  query = query.toUpperCase()
+  query = removeDiacritics(query.toUpperCase())
   query = escapeRegex(query)
 
   switch (mode) {
@@ -42,7 +43,7 @@ function generateQuery(regex, minLen, maxLen) {
   const conditions = []
 
   if (regex) {
-    conditions.push({ value: { $regex: regex, $options: 'i' } })
+    conditions.push({ valueNoDiacritics: { $regex: regex, $options: 'i' } })
   }
   if (minLen) {
     conditions.push({

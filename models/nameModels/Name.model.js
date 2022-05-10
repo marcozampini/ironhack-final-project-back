@@ -12,6 +12,10 @@ const nameSchema = new Schema(
       unique: true,
       required: true,
     },
+    valueNoDiacritics: {
+      type: String,
+      required: true,
+    },
   },
   {
     // this second object adds extra properties: `createdAt` and `updatedAt`

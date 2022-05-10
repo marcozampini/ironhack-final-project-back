@@ -1,6 +1,7 @@
 const connect = require('../index')
 const { default: mongoose } = require('mongoose')
 const namesBatchData = require('./namesBatchData.json')
+const removeDiacritics = require('../../utils/removeDiacritics')
 
 const Name = require('../../models/nameModels/Name.model')
 const NameStats = require('../../models/nameModels/NameStats.model')
@@ -21,9 +22,13 @@ const seedOneName = async (nameData) => {
   if (typeof nameData?.name === 'string' && !nameData.name.includes(' ')) {
     nameData.name = nameData.name.toUpperCase()
     const savedName = await Name.findOneAndUpdate(
-      { value: nameData.name },
       {
         value: nameData.name,
+        valueNoDiacritics: removeDiacritics(nameData.name),
+      },
+      {
+        value: nameData.name,
+        valueNoDiacritics: removeDiacritics(nameData.name),
       },
       {
         new: true,
